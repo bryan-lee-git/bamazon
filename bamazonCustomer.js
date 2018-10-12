@@ -5,7 +5,7 @@ var cart = [];
 var totalCost = 0;
 var divider = "-----------------------------------";
 
-// create connection config info
+// database connection config
 var connection = mysql.createConnection({
     host: "localhost",
     port: 8889,
@@ -14,8 +14,8 @@ var connection = mysql.createConnection({
     database: "bamazon"
 });
 
-// function for logging products table to the console
-function displayProducts() {
+// logging products table to console
+function displayItems() {
     console.log("Loading data...");
     var query = connection.query(`SELECT * FROM products`, (error, results) => {
         if (error) throw error;
@@ -28,6 +28,7 @@ function displayProducts() {
     // console.log(query.sql);
 };
 
+// check stock or item/quantity user wants to purchase
 function checkStock(item, quantity) {
     console.log("Checking stock...");
     var query = connection.query(`SELECT * FROM products WHERE product_name LIKE "%${item}%"`, (error, results) => {
@@ -45,23 +46,25 @@ function checkStock(item, quantity) {
             openBamazon();
         } else {
             console.log(`You're in luck. We have ${currentItem.stock_quantity} ${currentItem.product_name}(s) currently in stock. ${quantity} successfully added to your cart.`);
-            totalCost += (currentItem.price * quantity);
+            var saleTotal = currentItem.price * quantity;
+            var totalSales = currentItem.product_sales += saleTotal;
+            totalCost += saleTotal;
             currentItem.inCart = (parseInt(quantity));
             cart.push(currentItem);
             var inventory = currentItem.stock_quantity - quantity;
-            updateStock(currentItem.product_name, inventory);
+            updateStock(currentItem.product_name, inventory, totalSales);
         };
     });
     // console.log(query.sql);
 };
 
-// update a song in the database
-function updateStock(item, inventory) {
+// update an item's stock count
+function updateStock(item, inventory, sales) {
     var query = connection.query(
         "UPDATE products SET ? WHERE ?",
         [
-            { stock_quantity: `${inventory}` },
-            { product_name: `${item}` }
+            { stock_quantity: inventory, product_sales: sales },
+            { product_name: item },
         ],
         (err, res) => {
             if (err) throw err;
@@ -72,8 +75,8 @@ function updateStock(item, inventory) {
     // console.log(query.sql);
 };
 
-// function for buying an item
-function buy() {
+// buy an item
+function buyItem() {
     inquirer.prompt(
         [
             { name: "item", message: "What would you like to buy?" },
@@ -84,7 +87,7 @@ function buy() {
     });
 };
 
-// prpogram initialization and user action interface - recursive inquirer function 
+// program initialization and user action interface - recursive inquirer function 
 function openBamazon() {
     inquirer.prompt(
         [{
@@ -94,20 +97,24 @@ function openBamazon() {
             choices: ["View Bamazon Items", "Add An Item to Your Cart", "Checkout", "View Cart", "Exit"]
         }]
     ).then((answers) => {
-        if (answers.action === "View Bamazon Items") {
-            displayProducts();
-        } 
-        else if (answers.action === "Add An Item to Your Cart") {
-            buy();
-        } 
-        else if (answers.action === "View Cart") {
-            console.log(`Cart Total (before shipping + tax): $${totalCost}`);
-            console.table(cart);
-            openBamazon();
+        switch(answers.action) {
+            case "View Bamazon Items":
+                displayItems();
+            break;
+            case "Add An Item to Your Cart":
+                buyItem();
+            break;
+            case "View Cart":
+                console.log(`Cart Total (before shipping + tax): $${totalCost}`);
+                console.table(cart);
+                openBamazon();
+            break;
+            case "Checkout":
+                console.log(`Cart Total (before shipping + tax): $${totalCost}`);
+                console.table(cart);
+            break;
+            case "Exit":
+            break;
         }
-        else if (answers.action === "Checkout") {
-            console.log(`Cart Total (before shipping + tax): $${totalCost}`);
-            console.table(cart);
-        };
     });
 }; openBamazon();

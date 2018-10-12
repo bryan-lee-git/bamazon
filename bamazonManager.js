@@ -3,7 +3,7 @@ var mysql = require("mysql");
 var inquirer = require("inquirer");
 var divider = "-----------------------------------";
 
-// create connection config info
+// database connection config
 var connection = mysql.createConnection({
     host: "localhost",
     port: 8889,
@@ -27,7 +27,7 @@ function displayItems(searchType) {
         console.table(results);
         openBamazonManager();
     });
-    console.log(query.sql);
+    // console.log(query.sql);
 };
 
 // add a new item
@@ -47,7 +47,6 @@ function addItem(product_name, dept_name, price, stock_quantity) {
             openBamazonManager();
         }
     );
-    // logs the actual query being run
     // console.log(query.sql);
 };
 
@@ -83,7 +82,7 @@ function updateItem(item, newStock) {
     // console.log(query.sql);
 };
 
-// prpogram initialization and user action interface - recursive inquirer function 
+// program initialization and user action interface - recursive inquirer function 
 function openBamazonManager() {
     inquirer.prompt([
         { type: "list", name: "action", message: "Welcome to the Bamazon Manager's Console. What would you like to do?", choices: ["View All Items", "Add New Item", "Update Existing Item", "Delete An Item", "View Low Inventory", "Exit Console"] }
