@@ -26,7 +26,7 @@ function viewDepts(searchType) {
             openBamazon();
         });
     } else if (searchType === "Products with Sales") {
-        connection.query("SELECT product_id AS 'Product ID', product_name AS 'Product Name', (product_sales / price) AS '# Sold', stock_quantity AS '# In Stock' FROM bamazon.products WHERE product_sales > 0;", (error, results) => {
+        connection.query("SELECT item_id AS 'Product ID', product_name AS 'Product Name', (product_sales / price) AS '# Sold', product_sales AS 'Total Sales', stock_quantity AS '# In Stock' FROM bamazon.products WHERE product_sales > 0;", (error, results) => {
             if (error) throw error;
             console.table(results);
             openBamazon();
