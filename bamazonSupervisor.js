@@ -52,7 +52,7 @@ function addDept(department_name, overhead_costs) {
     // console.log(query.sql);
 };
 
-// run the program and recursive question/inquirer loop for user functionality
+// run program and recursive question/inquirer loop
 function openBamazon() {
     inquirer.prompt(
         [{
