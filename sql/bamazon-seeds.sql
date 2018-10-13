@@ -15,6 +15,58 @@ CREATE TABLE
 		product_sales INT(10) DEFAULT '0',
 		PRIMARY KEY(item_id)
 	);
+    
+CREATE VIEW
+	customer_storefront
+AS SELECT
+	product_name AS 'Product Name',
+    item_id AS 'Item ID',
+    price AS 'Price ($)' 
+FROM
+	products
+WHERE
+	stock_quantity > 0;
+    
+CREATE VIEW
+	manager_storefront
+AS SELECT
+	item_id AS 'ID',
+    product_name AS 'Product',
+    dept_name AS 'Department',
+    price AS 'Price/Unit',
+    stock_quantity AS 'In Stock',
+    product_sales AS 'Sales'
+FROM
+	products;
+    
+CREATE VIEW
+	low_inventory
+AS SELECT
+	item_id AS 'ID',
+    product_name AS 'Product',
+    dept_name AS 'Department',
+    price AS 'Price/Unit',
+    stock_quantity AS 'In Stock',
+    product_sales AS 'Sales'
+FROM
+	products
+WHERE
+	stock_quantity < 5
+ORDER BY
+	stock_quantity ASC;
+    
+CREATE VIEW
+	sales_by_product
+AS SELECT
+	item_id AS 'Product ID',
+    product_name AS 'Product Name',
+    (product_sales / price) AS '# Sold',
+    product_sales AS 'Total Sales',
+    stock_quantity AS '# In Stock'
+FROM
+	bamazon.products
+ORDER BY
+	product_sales DESC;
 
 INSERT INTO
 	products (product_name, dept_name, price, stock_quantity)
@@ -37,6 +89,34 @@ CREATE TABLE
 		overhead_costs DECIMAL(10,2) NOT NULL,
 		PRIMARY KEY(dept_id)
 	);
+    
+CREATE VIEW
+	all_depts 
+AS SELECT
+    dept_id AS 'Dept ID',
+    department_name AS 'Dept Name',
+    overhead_costs AS 'Overhead Costs ($)'
+FROM
+	bamazon.departments;
+    
+CREATE VIEW
+	sales_by_dept
+AS SELECT
+	dept_id AS 'Dept ID',
+    department_name AS 'Dept Name',
+    SUM(product_sales) AS 'Total Sales',
+    overhead_costs AS 'Overhead',
+    (SUM(product_sales) - overhead_costs) AS 'Profit'
+FROM 
+	bamazon.products
+LEFT JOIN
+	bamazon.departments
+ON
+	bamazon.products.dept_name=bamazon.departments.department_name
+GROUP BY 
+	department_name
+ORDER BY
+	profit DESC;
 
 INSERT INTO
 	departments (department_name, overhead_costs)
