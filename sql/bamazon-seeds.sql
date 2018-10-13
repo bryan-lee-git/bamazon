@@ -1,11 +1,10 @@
-
 DROP DATABASE IF EXISTS
 	bamazon;
 CREATE DATABASE
 	bamazon;
 USE
 	bamazon;
-
+    
 CREATE TABLE 
 	products (
 		item_id INT(10) NOT NULL AUTO_INCREMENT,
@@ -51,3 +50,19 @@ VALUES
 	("Office Furniture", 7000),
 	("Hardware/Tools", 500),
 	("Office Supplies", 1200);
+    
+CREATE TABLE
+	users (
+		user_id INT(10) NOT NULL AUTO_INCREMENT,
+        user_name VARCHAR(40) NOT NULL UNIQUE,
+        user_role VARCHAR(40) NOT NULL,
+        user_pw VARCHAR(40) NOT NULL,
+        PRIMARY KEY (user_id)
+	);
+    
+INSERT INTO
+	users (user_name, user_role, user_pw)
+VALUES
+	("usertest", "Customer", "usertest!"),
+	("managertest", "Manager", "managertest!"),
+	("supervisortest", "Supervisor", "supervisortest!");

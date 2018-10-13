@@ -18,7 +18,7 @@ function displayItems() {
     connection.query(`SELECT product_name AS 'Product Name', item_id AS 'Item ID', price AS 'Price ($)' FROM products WHERE stock_quantity > 0`, (error, results) => {
         if (error) throw error;
         console.table(results);
-        openBamazon();
+        bamazonCustomer();
     });
 };
 
@@ -29,13 +29,13 @@ function checkStock(item, quantity) {
         var currentItem = results[0];
         if (error) {
             console.log(`\n${item} coult not be found in our database.\n`);
-            openBamazon();
+            bamazonCustomer();
         } else if (currentItem.stock_quantity === 0) {
             console.log(`\nSorry. ${currentItem.product_name} is currently out of stock.\n`);
-            openBamazon();
+            bamazonCustomer();
         } else if (quantity > currentItem.stock_quantity) {
             console.log(`\nSorry. There are only ${currentItem.stock_quantity} ${currentItem.product_name}(s) currently in stock.\n`);
-            openBamazon();
+            bamazonCustomer();
         } else {
             console.log(`\nYou're in luck. We have ${currentItem.stock_quantity} ${currentItem.product_name}(s) currently in stock. ${quantity} successfully added to your cart.\n`);
             var saleTotal = currentItem.price * quantity;
@@ -63,7 +63,7 @@ function updateStock(item, inventory, sales) {
             { product_name: item },
         ], (err) => {
             if (err) throw err;
-            openBamazon();
+            bamazonCustomer();
         }
     );
 };
@@ -79,7 +79,7 @@ function buyItem() {
 };
 
 // program initialization and user action interface - recursive inquirer function 
-function openBamazon() {
+function bamazonCustomer() {
     inquirer.prompt(
         [{
             type: "list",
@@ -98,7 +98,7 @@ function openBamazon() {
             case "View Cart":
                 console.log(`Cart Total (before shipping + tax): $${totalCost}`);
                 console.table(cart);
-                openBamazon();
+                bamazonCustomer();
             break;
             case "Checkout":
                 console.log(`Cart Total (before shipping + tax): $${totalCost}`);
@@ -109,4 +109,7 @@ function openBamazon() {
             break;
         }
     });
-}; openBamazon();
+};
+
+// exports
+module.exports = bamazonCustomer;

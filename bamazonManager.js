@@ -24,11 +24,11 @@ function displayItems(searchType) {
     connection.query(search, (err, res) => {
         if (err) throw err;
         console.table(res);
-        openBamazonManager();
+        bamazonManager();
     });
 };
 
-// add a new item
+// add a new item to store
 function addItem(product_name, dept_name, price, stock_quantity) {
     console.log("Adding new item...\n");
     connection.query(
@@ -36,12 +36,12 @@ function addItem(product_name, dept_name, price, stock_quantity) {
         { product_name, dept_name, price, stock_quantity }, (err, res) => {
             if (err) throw err;
             console.log(res.affectedRows + " new item has been added to the Bamazon store!\n");
-            openBamazonManager();
+            bamazonManager();
         }
     );
 };
 
-// delete an item
+// delete an item from store
 function deleteItem(product) {
     console.log("Deleting item...\n");
     connection.query(
@@ -49,7 +49,7 @@ function deleteItem(product) {
         { product_name: product }, (err) => {
             if (err) console.log(`There was an error deleting ${product}. Try again.\n`);
             console.log(`${product} has been deleted successfully.\n`);
-            openBamazonManager();
+            bamazonManager();
         }
     );
 };
@@ -61,13 +61,13 @@ function updateItem(item, newStock) {
         { stock_quantity: newStock }, (err) => {
             if (err) console.log(`There was an error updating ${item}. Try again.\n`);
             console.log("Product updated!\n");
-            openBamazonManager();
+            bamazonManager();
         }
     );
 };
 
 // program initialization and user action interface - recursive inquirer function 
-function openBamazonManager() {
+function bamazonManager() {
     inquirer.prompt([
         { type: "list", name: "action", message: "Welcome to the Bamazon Manager's Console. What would you like to do?", choices: ["View All Items", "Add New Item", "Update Existing Item", "Delete An Item", "View Low Inventory", "Exit"] }
     ]).then((answers) => {
@@ -108,4 +108,7 @@ function openBamazonManager() {
             break;
         };
     });
-}; openBamazonManager();
+};
+
+// exports
+module.exports = bamazonManager;
