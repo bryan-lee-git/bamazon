@@ -97,9 +97,11 @@ function bamazonCustomer(user) {
             });
         }
         else if (answers.action === "View Cart") {
-            console.log(`\nCart Total (before shipping + tax): $${totalCost}\n` .bgCyan);
-            console.table(currentCart.items);
-            bamazonCustomer();
+            if (currentCart.items.length > 0) {
+                console.log(`\nCart Total (before shipping + tax): $${totalCost}\n` .bgCyan);
+                console.table(currentCart.items);
+                bamazonCustomer();
+            } else console.log("\nThere are no items in your cart.\n" .bgRed), bamazonCustomer();
         }
         else if (answers.action === "Empty Cart") {
             currentCart.items = [];
