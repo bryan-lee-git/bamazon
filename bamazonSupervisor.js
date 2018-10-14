@@ -3,11 +3,11 @@ var inquirer = require("inquirer");
 
 // functionality for logging dept, product, and sales data to console
 function viewDepts(searchType) {
-    console.log("Loading data...");
+    console.log("\nLoading data...\n");
     connection.query(
         `SELECT * FROM ${searchType}`,
         (err, res) => {
-            if (err) console.log(`There was an error loading the ${searchType} view.`);
+            if (err) console.log(`\nThere was an error loading the ${searchType} view.\n`);
             console.table(res);
             bamazonSupervisor();
         }
@@ -16,13 +16,13 @@ function viewDepts(searchType) {
 
 // add a new department
 function addDept(department_name, overhead_costs) {
-    console.log("Adding new department...\n");
+    console.log("\nAdding new department...\n");
     connection.query(
         "INSERT INTO departments SET ?",
         { department_name, overhead_costs },
         (err) => {
-            if (err) console.log(`There was an error adding the department ${department_name}. Try again.`);
-            console.log(`A new department named ${department_name} has been added!\n`);
+            if (err) console.log(`\nThere was an error adding the department ${department_name}. Try again.\n`);
+            console.log(`\nA new department named ${department_name} has been added!\n`);
             bamazonSupervisor();
         }
     );

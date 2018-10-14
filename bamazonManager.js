@@ -3,11 +3,11 @@ var inquirer = require("inquirer");
 
 // log products table to console
 function displayItems(searchType) {
-    console.log("Loading data...");
+    console.log("\nLoading data...\n");
     connection.query(
         `SELECT * FROM ${searchType}`,
         (err, res) => {
-            if (err) console.log(`There was an error loading the ${searchType} view.`);
+            if (err) console.log(`\nThere was an error loading the ${searchType} view.\n`);
             console.table(res);
             bamazonManager();
         }
@@ -16,13 +16,13 @@ function displayItems(searchType) {
 
 // add a new item to store
 function addItem(product_name, dept_name, price, stock_quantity) {
-    console.log("Adding new item...\n");
+    console.log("\nAdding new item...\n");
     connection.query(
         "INSERT INTO products SET ?",
         { product_name, dept_name, price, stock_quantity },
         (err) => {
-            if (err) console.log(`There was an error adding ${product_name}. Try again.`);
-            console.log(`${product_name} has been added to the Bamazon store!\n`);
+            if (err) console.log(`\nThere was an error adding ${product_name}. Try again.`);
+            console.log(`\n${product_name} has been added to the Bamazon store!\n`);
             bamazonManager();
         }
     );
@@ -30,13 +30,13 @@ function addItem(product_name, dept_name, price, stock_quantity) {
 
 // delete an item from store
 function deleteItem(product) {
-    console.log("Deleting item...\n");
+    console.log("\nDeleting item...\n");
     connection.query(
         "DELETE FROM products WHERE ?",
         { product_name: product },
         (err) => {
-            if (err) console.log(`There was an error deleting ${product}. Try again.\n`);
-            console.log(`${product} has been deleted successfully.\n`);
+            if (err) console.log(`\nThere was an error deleting ${product}. Try again.\n`);
+            console.log(`\n${product} has been deleted successfully.\n`);
             bamazonManager();
         }
     );
@@ -48,8 +48,8 @@ function updateItem(item, newStock) {
         `UPDATE products SET ? WHERE product_name LIKE "%${item}%"`,
         { stock_quantity: newStock },
         (err) => {
-            if (err) console.log(`There was an error updating ${item}. Try again.\n`);
-            console.log("Product updated!\n");
+            if (err) console.log(`\nThere was an error updating ${item}. Try again.\n`);
+            console.log("\nProduct updated!\n");
             bamazonManager();
         }
     );

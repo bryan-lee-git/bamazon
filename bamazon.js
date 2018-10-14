@@ -16,18 +16,19 @@ function bamazon() {
                 connection.query(
                     `SELECT * FROM users WHERE user_name = '${answers.username}'`,
                     (err, res) => {
-                        if (err) console.log(`Username ${answers.username} not found. Try again.`);
+                        if (err || res.length === 0) console.log(`Username ${answers.username} not found. Try again.`), bamazon();
                         else if (res[0].user_name === answers.username) {
-                            console.log("User found in system!");
+                            var currentUser = res[0];
+                            console.log("\nUser found in system!\n");
                             inquirer.prompt([
                                 { type: "password", name: "pw", message: "Enter your password:" }
                             ]).then((answers) => {
-                                if (answers.pw === res[0].user_pw) {
-                                    console.log(`Successfully logged-in as ${res[0].user_name}!`);
-                                    if (res[0].user_role === "Customer") bamazonCustomer();
-                                    else if (res[0].user_role === "Manager") bamazonManager();
-                                    else if (res[0].user_role === "Supervisor") bamazonSupervisor();
-                                } else console.log("Incorrect password. Please try again.");
+                                if (answers.pw === currentUser.user_pw) {
+                                    console.log(`\nSuccessfully logged-in as ${currentUser.user_name}!\n`);
+                                    if (currentUser.user_role === "Customer") bamazonCustomer(currentUser);
+                                    else if (currentUser.user_role === "Manager") bamazonManager();
+                                    else if (currentUser.user_role === "Supervisor") bamazonSupervisor();
+                                } else console.log("\nIncorrect password. Please try again.\n"), bamazon();
                             });
                         };
                     }
@@ -39,16 +40,16 @@ function bamazon() {
                 { type: "list", name: "role", message: "You are a...", choices: ["Customer", "Manager", "Supervisor"] },
                 { type: "password", name: "pw", message: "Enter your password" }
             ]).then((answers) => {
-                console.log("Adding new user...\n");
+                console.log("\nAdding new user...\n");
                 connection.query(
                     "INSERT INTO users SET ?",
                     { user_name: answers.name, user_role: answers.role, user_pw: answers.pw },
                     (err) => {
                         if (err) {
-                            console.log("There was an issue adding your account. Please try again.");
+                            console.log("\nThere was an issue adding your account. Please try again.\n");
                             bamazon();
                         } else {
-                            console.log("Account successfully created! Please try to log-in.");
+                            console.log("\nAccount successfully created! Please try to log-in.\n");
                             bamazon();
                         };
                     }
