@@ -1,13 +1,14 @@
 var connection = require("./bamazon_db.js");
 var inquirer = require("inquirer");
+var colors = require('colors');
 
 // log products table to console
 function displayItems(searchType) {
-    console.log("\nLoading data...\n");
+    console.log("\nLoading data..." .bgMagenta);
     connection.query(
         `SELECT * FROM ${searchType}`,
         (err, res) => {
-            if (err) console.log(`\nThere was an error loading the ${searchType} view.\n`);
+            if (err) console.log(`\nThere was an error loading the ${searchType} view.\n` .bgRed);
             console.table(res);
             bamazonManager();
         }
@@ -16,13 +17,13 @@ function displayItems(searchType) {
 
 // add a new item to store
 function addItem(product_name, dept_name, price, stock_quantity) {
-    console.log("\nAdding new item...\n");
+    console.log("\nAdding new item..." .bgMagenta);
     connection.query(
         "INSERT INTO products SET ?",
         { product_name, dept_name, price, stock_quantity },
         (err) => {
-            if (err) console.log(`\nThere was an error adding ${product_name}. Try again.`);
-            console.log(`\n${product_name} has been added to the Bamazon store!\n`);
+            if (err) console.log(`\nThere was an error adding ${product_name}. Try again.` .bgRed);
+            console.log(`\n${product_name} has been added to the Bamazon store!\n` .bgGreen);
             bamazonManager();
         }
     );
@@ -30,13 +31,13 @@ function addItem(product_name, dept_name, price, stock_quantity) {
 
 // delete an item from store
 function deleteItem(product) {
-    console.log("\nDeleting item...\n");
+    console.log("\nDeleting item..." .bgMagenta);
     connection.query(
         "DELETE FROM products WHERE ?",
         { product_name: product },
         (err) => {
-            if (err) console.log(`\nThere was an error deleting ${product}. Try again.\n`);
-            console.log(`\n${product} has been deleted successfully.\n`);
+            if (err) console.log(`\nThere was an error deleting ${product}. Try again.\n` .bgRed);
+            console.log(`\n${product} has been deleted successfully.\n` .bgGreen);
             bamazonManager();
         }
     );
@@ -48,8 +49,8 @@ function updateItem(item, newStock) {
         `UPDATE products SET ? WHERE product_name LIKE "%${item}%"`,
         { stock_quantity: newStock },
         (err) => {
-            if (err) console.log(`\nThere was an error updating ${item}. Try again.\n`);
-            console.log("\nProduct updated!\n");
+            if (err) console.log(`\nThere was an error updating ${item}. Try again.\n` .bgRed);
+            console.log(`\n${item} has been updated!\n` .bgGreen);
             bamazonManager();
         }
     );
@@ -87,7 +88,7 @@ function bamazonManager() {
             });
         }
         else if (answers.action === "View Low Inventory") displayItems("low_inventory");
-        else console.log("\nThank you for using Bamazon CLI for Managers.\nHave a great day! :-D\n"), process.exit();
+        else console.log("\nThank you for using Bamazon CLI for Managers.\nHave a great day! :-D\n" .bgCyan), process.exit();
     });
 };
 

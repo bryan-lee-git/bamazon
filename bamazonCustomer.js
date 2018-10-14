@@ -1,5 +1,6 @@
 const connection = require("./bamazon_db.js");
 const inquirer = require("inquirer");
+var colors = require('colors');
 var totalCost = 0;
 var currentCart = undefined;
 
@@ -14,11 +15,11 @@ function createCart(user) {
 
 // logging products table to console
 function displayItems() {
-    console.log("\nLoading the Bamazon Store...\n");
+    console.log("\nLoading the Bamazon Store..." .bgMagenta);
     connection.query(
         `SELECT * FROM customer_storefront`,
         (err, res) => {
-            if (err) console.log(`\nThere was an error loading the Bamazon Store. Try again.\n`);
+            if (err) console.log(`\nThere was an error loading the Bamazon Store. Try again.\n` .bgRed);
             console.table(res);
             bamazonCustomer();
         }
@@ -27,22 +28,22 @@ function displayItems() {
 
 // check stock or item/quantity user wants to purchase
 function checkStock(item, quantity) {
-    console.log("\nChecking stock...");
+    console.log("\nChecking stock..." .bgMagenta);
     connection.query(
         `SELECT * FROM products WHERE product_name LIKE "%${item}%"`, 
         (err, res) => {
             var currentItem = res[0];
             if (err || res.length === 0) {
-                console.log(`\n${item} coult not be found in our database.\n`);
+                console.log(`\n${item} coult not be found in our database.\n` .bgRed);
                 bamazonCustomer();
             } else if (currentItem.stock_quantity === 0) {
-                console.log(`\nSorry. ${currentItem.product_name} is currently out of stock.\n`);
+                console.log(`\nSorry. ${currentItem.product_name} is currently out of stock.\n` .bgRed);
                 bamazonCustomer();
             } else if (quantity > currentItem.stock_quantity) {
-                console.log(`\nSorry. There are only ${currentItem.stock_quantity} ${currentItem.product_name}(s) currently in stock.\n`);
+                console.log(`\nSorry. There are only ${currentItem.stock_quantity} ${currentItem.product_name}(s) currently in stock.\n` .bgRed);
                 bamazonCustomer();
             } else {
-                console.log(`\nYou're in luck. We have ${currentItem.stock_quantity} ${currentItem.product_name}(s) currently in stock. ${quantity} successfully added to your cart.\n`);
+                console.log(`\nYou're in luck. We have ${currentItem.stock_quantity} ${currentItem.product_name}(s) currently in stock. ${quantity} successfully added to your cart.\n` .bgGreen);
                 var cartItem = {
                     product: currentItem.product_name,
                     quantity: parseInt(quantity),
@@ -69,7 +70,7 @@ function updateStock(item, inventory, sales) {
             { product_name: item }
         ],
         (err) => {
-            if (err) console.log(`\nThere was an error updating the stock.\nA message about this error has been sent to Bamazon management.\n`);
+            if (err) console.log(`\nThere was an error updating the stock.\nA message about this error has been sent to Bamazon management.\n` .bgRed);
             bamazonCustomer();
         }
     );
@@ -96,27 +97,27 @@ function bamazonCustomer(user) {
             });
         }
         else if (answers.action === "View Cart") {
-            console.log(`\nCart Total (before shipping + tax): $${totalCost}\n`);
+            console.log(`\nCart Total (before shipping + tax): $${totalCost}\n` .bgCyan);
             console.table(currentCart.items);
             bamazonCustomer();
         }
         else if (answers.action === "Empty Cart") {
             currentCart.items = [];
             totalCost = 0;
-            console.log("\nYour cart has been emptied.\n");
+            console.log("\nYour cart has been emptied.\n" .bgGreen);
             bamazonCustomer();
         }
         else if (answers.action === "Checkout") {
-            if (totalCost === 0) console.log("\nThere are no items in your cart to checkout with.\n"), bamazonCustomer();
+            if (totalCost === 0) console.log("\nThere are no items in your cart to checkout with.\n" .bgRed), bamazonCustomer();
             else {
-                console.log(`\nThank you for your order! We greatly appreciate your business.\nThe card you have on file has been charged for $${totalCost}.\nExpect your items to be delivered within 2-3 business days.\n`);
+                console.log(`\nThank you for your order! We greatly appreciate your business.\nThe card you have on file has been charged for $${totalCost}.\nExpect your items to be delivered within 2-3 business days.\n` .bgGreen);
                 console.table(currentCart.items);
                 currentCart.items = [];
                 totalCost = 0;
                 bamazonCustomer();
             };
         }
-        else console.log("\nThanks for shopping with Bamazon.\nHave a great day! :-D\n"), process.exit();
+        else console.log("\nThanks for shopping with Bamazon.\nHave a great day! :-D\n" .bgCyan), process.exit();
     });
 };
 

@@ -1,13 +1,14 @@
 var connection = require("./bamazon_db.js");
 var inquirer = require("inquirer");
+var colors = require('colors');
 
 // functionality for logging dept, product, and sales data to console
 function viewDepts(searchType) {
-    console.log("\nLoading data...\n");
+    console.log("\nLoading data..." .bgMagenta);
     connection.query(
         `SELECT * FROM ${searchType}`,
         (err, res) => {
-            if (err) console.log(`\nThere was an error loading the ${searchType} view.\n`);
+            if (err) console.log(`\nThere was an error loading the ${searchType} view.\n` .bgRed);
             console.table(res);
             bamazonSupervisor();
         }
@@ -16,13 +17,13 @@ function viewDepts(searchType) {
 
 // add a new department
 function addDept(department_name, overhead_costs) {
-    console.log("\nAdding new department...\n");
+    console.log("\nAdding new department..." .bgMagenta);
     connection.query(
         "INSERT INTO departments SET ?",
         { department_name, overhead_costs },
         (err) => {
-            if (err) console.log(`\nThere was an error adding the department ${department_name}. Try again.\n`);
-            console.log(`\nA new department named ${department_name} has been added!\n`);
+            if (err) console.log(`\nThere was an error adding the department ${department_name}. Try again.\n` .bgRed);
+            console.log(`\nA new department named ${department_name} has been added!\n` .bgGreen);
             bamazonSupervisor();
         }
     );
@@ -49,7 +50,7 @@ function bamazonSupervisor() {
             });
         }
         else if (answers.action === "View Sales by Product") viewDepts("sales_by_product");
-        else console.log("\nThank you for using Bamazon CLI for Supervisors.\nHave a great day! :-D\n"), process.exit();
+        else console.log("\nThank you for using Bamazon CLI for Supervisors.\nHave a great day! :-D\n" .bgCyan), process.exit();
     });
 };
 
